@@ -555,13 +555,6 @@ int main(int argc, char *argv[])
     if (AttachCoreLib(l_CoreLibPath) != M64ERR_SUCCESS)
         return 2;
 
-    /* Enter the main loop */
-    GtkWidget* win = getMainWindow();
-    gtk_widget_show_all (win);
-    gtk_main ();
-
-    return 0;
-
     /* start the Mupen64Plus core library, load the configuration file */
     m64p_error rval = (*CoreStartup)(CORE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, NULL);
     if (rval != M64ERR_SUCCESS)
@@ -712,6 +705,11 @@ int main(int argc, char *argv[])
     /* free allocated memory */
     if (l_TestShotList != NULL)
         free(l_TestShotList);
+
+    /* Enter the main loop */
+    GtkWidget* win = getMainWindow();
+    gtk_widget_show_all (win);
+    gtk_main ();
 
     return 0;
 }
