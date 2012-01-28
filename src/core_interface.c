@@ -145,20 +145,17 @@ m64p_error AttachCoreLib(const char *CoreLibFilepath)
     }
 
     /* attach and call the PluginGetVersion function, check the Core and API versions for compatibility with this front-end */
-    ptr_PluginGetVersion CoreVersionFunc;
-    CoreVersionFunc = (ptr_PluginGetVersion) osal_dynlib_getproc(CoreHandle, "PluginGetVersion");
-    if (CoreVersionFunc == NULL)
+    m64p_plugin_type PluginType = (m64p_plugin_type) 0;
+    int Compatible = 0;
+    int CoreVersion = 0;
+    const char *CoreName = NULL;
+    if (getCoreVersion(&PluginType, &CoreVersion, &g_CoreAPIVersion, &CoreName, &g_CoreCapabilities) == M64ERR_INPUT_INVALID)
     {
         fprintf(stderr, "AttachCoreLib() Error: Shared library '%s' invalid; no PluginGetVersion() function found.\n", CoreLibFilepath);
         osal_dynlib_close(CoreHandle);
         CoreHandle = NULL;
         return M64ERR_INPUT_INVALID;
     }
-    m64p_plugin_type PluginType = (m64p_plugin_type) 0;
-    int Compatible = 0;
-    int CoreVersion = 0;
-    const char *CoreName = NULL;
-    (*CoreVersionFunc)(&PluginType, &CoreVersion, &g_CoreAPIVersion, &CoreName, &g_CoreCapabilities);
     if (PluginType != M64PLUGIN_CORE)
         fprintf(stderr, "AttachCoreLib() Error: Shared library '%s' invalid; this is not the emulator core.\n", CoreLibFilepath);
     else if (CoreVersion < MINIMUM_CORE_VERSION)
@@ -330,6 +327,20 @@ m64p_error DetachCoreLib(void)
     /* detach the shared library */
     osal_dynlib_close(CoreHandle);
     CoreHandle = NULL;
+
+    return M64ERR_SUCCESS;
+}
+
+m64p_error getCoreVersion(m64p_plugin_type *PluginType, int *CoreVersion, int *CoreAPIVersion, const char **CoreName, int *CoreCapabilities)
+{
+    /* attach and call the PluginGetVersion function, check the Core and API versions for compatibility with this front-end */
+    ptr_PluginGetVersion CoreVersionFunc;
+    CoreVersionFunc = (ptr_PluginGetVersion) osal_dynlib_getproc(CoreHandle, "PluginGetVersion");
+    if (CoreVersionFunc == NULL)
+    {
+        return M64ERR_INPUT_INVALID;
+    }
+    (*CoreVersionFunc)(PluginType, CoreVersion, CoreAPIVersion, CoreName, CoreCapabilities);
 
     return M64ERR_SUCCESS;
 }

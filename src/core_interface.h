@@ -31,6 +31,7 @@
 /* function declarations */
 extern m64p_error AttachCoreLib(const char *CoreLibFilepath);
 extern m64p_error DetachCoreLib(void);
+m64p_error getCoreVersion(m64p_plugin_type *PluginType, int *CoreVersion, int *g_CoreAPIVersion, const char **CoreName, int *g_CoreCapabilities);
 
 /* global variables from core_interface.c */
 extern int g_CoreCapabilities;

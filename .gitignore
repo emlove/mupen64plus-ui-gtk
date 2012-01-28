@@ -1,5 +1,5 @@
 projects/unix/_obj/
 projects/unix/mupen64plus
-projects/unix/libmupen64plus.so.2*
+libmupen64plus.so.2*
 
 .hg*

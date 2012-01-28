@@ -205,6 +205,8 @@ SOURCE = \
 	$(SRCDIR)/cheat.c \
 	$(SRCDIR)/compare_core.c \
 	$(SRCDIR)/core_interface.c \
+	$(SRCDIR)/interface_alert.c \
+	$(SRCDIR)/interface_main_bindings.c \
 	$(SRCDIR)/interface_main.c \
 	$(SRCDIR)/main.c \
 	$(SRCDIR)/plugin.c \

@@ -3,7 +3,10 @@
 
 #include <gtk/gtk.h>
 
-GtkWidget* createWindow();
-static void helloWorld (GtkWidget *wid, GtkWidget *win);
+#include "strings.h"
+#include "interface_main_bindings.h"
+
+GtkWidget* getMainWindow();
+static GtkWidget* createWindow();
 
 #endif /* __INTERFACE_MAIN_H__ */
