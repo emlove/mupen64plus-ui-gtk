@@ -22,7 +22,13 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <gtk/gtk.h>
+#include <stdbool.h>
+
 extern void DebugCallback(void *Context, int level, const char *message);
+
+gpointer playRomThread(const char *ROMFilepath);
+bool getRomOpen();
 
 extern int  g_Verbose;
 

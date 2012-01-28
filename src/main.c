@@ -29,8 +29,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <gtk/gtk.h>
-
 // The mac version of SDL requires inclusion of SDL_main in the executable
 #ifdef __APPLE__
 #include <SDL/SDL_main.h>
@@ -45,6 +43,7 @@
 #include "osal_preproc.h"
 
 #include "interface_main.h"
+#include "rom_events.h"
 
 /** global variables **/
 int    g_Verbose = 0;
@@ -507,15 +506,14 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
         {
             l_SaveOptions = 1;
         }
+        else if (strcmp(argv[i], "--verbose") == 0)
+        {
+            g_Verbose = 1;
+        }
         else if (ArgsLeft == 0)
         {
             /* this is the last arg, it should be a ROM filename */
             l_ROMFilepath = argv[i];
-            return M64ERR_SUCCESS;
-        }
-        else if (strcmp(argv[i], "--verbose") == 0)
-        {
-            g_Verbose = 1;
         }
         else
         {
@@ -523,10 +521,145 @@ static m64p_error ParseCommandLineFinal(int argc, const char **argv)
         }
         /* continue argv loop */
     }
+    
+    return M64ERR_SUCCESS;
+}
 
-    /* missing ROM filepath */
-    fprintf(stderr, "Error: no ROM filepath given\n");
-    return M64ERR_INPUT_INVALID;
+m64p_error loadRom(const char *ROMFilepath, unsigned char **ROM_buffer, long *romlength)
+{
+    /* load ROM image */
+    FILE *fPtr = fopen(ROMFilepath, "rb");
+    if (fPtr == NULL)
+    {
+        return M64ERR_INPUT_NOT_FOUND;
+    }
+
+    /* get the length of the ROM, allocate memory buffer, load it from disk */
+    fseek(fPtr, 0L, SEEK_END);
+    *romlength = ftell(fPtr);
+    fseek(fPtr, 0L, SEEK_SET);
+    *ROM_buffer = (unsigned char *) malloc(*romlength);
+    if (*ROM_buffer == NULL)
+    {
+        fclose(fPtr);
+        return M64ERR_NO_MEMORY;
+    }
+    else if (fread(*ROM_buffer, 1, *romlength, fPtr) != *romlength)
+    {
+        free(*ROM_buffer);
+        fclose(fPtr);
+        return M64ERR_FILES;
+    }
+    fclose(fPtr);
+    
+    return M64ERR_SUCCESS;
+}
+
+m64p_error startRom(unsigned char *ROM_buffer, long romlength)
+{
+    m64p_error rval;
+    
+    /* Try to load the ROM image into the core */
+    if ((*CoreDoCommand)(M64CMD_ROM_OPEN, (int) romlength, ROM_buffer) != M64ERR_SUCCESS)
+    {
+        free(ROM_buffer);
+        return M64ERR_INTERNAL;
+    }
+    free(ROM_buffer); /* the core copies the ROM image, so we can release this buffer immediately */
+
+    /* handle the cheat codes */
+    CheatStart(l_CheatMode, l_CheatNumList);
+    if (l_CheatMode == CHEAT_SHOW_LIST)
+    {
+        return M64ERR_PLUGIN_FAIL;
+    }
+
+    /* search for and load plugins */
+    rval = PluginSearchLoad(l_ConfigUI);
+    if (rval != M64ERR_SUCCESS)
+    {
+        return M64ERR_PLUGIN_FAIL;
+    }
+
+    int i;
+    /* attach plugins to core */
+    for (i = 0; i < 4; i++)
+    {
+        if ((*CoreAttachPlugin)(g_PluginMap[i].type, g_PluginMap[i].handle) != M64ERR_SUCCESS)
+        {
+            fprintf(stderr, "UI-Console: error from core while attaching %s plugin.\n", g_PluginMap[i].name);
+            return M64ERR_SYSTEM_FAIL;
+        }
+    }
+
+    /* set up Frame Callback if --testshots is enabled */
+    if (l_TestShotList != NULL)
+    {
+        if ((*CoreDoCommand)(M64CMD_SET_FRAME_CALLBACK, 0, FrameCallback) != M64ERR_SUCCESS)
+        {
+            fprintf(stderr, "UI-Console: warning: couldn't set frame callback, so --testshots won't work.\n");
+        }
+    }
+
+    /* run the game */
+    romOpen();
+    (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
+    romClose();
+
+    /* detach plugins from core and unload them */
+    for (i = 0; i < 4; i++)
+        (*CoreDetachPlugin)(g_PluginMap[i].type);
+    PluginUnload();
+
+    /* close the ROM image */
+    (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
+
+    /* save the configuration file again if --saveoptions was specified, to keep any updated parameters from the core/plugins */
+    if (l_SaveOptions)
+        SaveConfigurationOptions();
+        
+    return M64ERR_SUCCESS;
+}
+
+m64p_error playRom(const char *ROMFilepath)
+{
+    long romlength = 0;
+    unsigned char *ROM_buffer = NULL;
+    m64p_error rval = loadRom(ROMFilepath, &ROM_buffer, &romlength);
+    
+    if (rval == M64ERR_INPUT_NOT_FOUND) {
+        fprintf(stderr, "Error: couldn't open ROM file '%s' for reading.\n", ROMFilepath);
+        return M64ERR_INPUT_NOT_FOUND;
+    } else if (rval == M64ERR_NO_MEMORY) {
+        fprintf(stderr, "Error: couldn't allocate %li-byte buffer for ROM image file '%s'.\n", romlength, ROMFilepath);
+        return M64ERR_NO_MEMORY;
+    } else if (rval == M64ERR_PLUGIN_FAIL) {
+        (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
+        return M64ERR_PLUGIN_FAIL;
+    } else if (rval == M64ERR_SYSTEM_FAIL) {
+        (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
+        return M64ERR_SYSTEM_FAIL;
+    }
+
+    rval = startRom(ROM_buffer, romlength);
+    
+    if (rval == M64ERR_INTERNAL) {
+        fprintf(stderr, "Error: core failed to open ROM image file '%s'.\n", ROMFilepath);
+        return M64ERR_INTERNAL;
+    } else if (rval == M64ERR_INVALID_STATE) {
+        (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
+        return M64ERR_INVALID_STATE;
+    } else if (rval == M64ERR_INVALID_STATE) {
+        (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
+        return M64ERR_INVALID_STATE;
+    }
+        
+    return M64ERR_SUCCESS;
+}
+
+gpointer playRomThread(const char *ROMFilepath)
+{
+    playRom(ROMFilepath);
 }
 
 /*********************************************************************************************************
@@ -549,11 +682,11 @@ int main(int argc, char *argv[])
 
     /* bootstrap some special parameters from the command line */
     if (ParseCommandLineInitial(argc, (const char **) argv) != 0)
-        return 1;
+        return M64ERR_INPUT_ASSERT;
 
     /* load the Mupen64Plus core library */
     if (AttachCoreLib(l_CoreLibPath) != M64ERR_SUCCESS)
-        return 2;
+        return M64ERR_SYSTEM_FAIL;
 
     /* start the Mupen64Plus core library, load the configuration file */
     m64p_error rval = (*CoreStartup)(CORE_API_VERSION, l_ConfigDirPath, l_DataDirPath, "Core", DebugCallback, NULL, NULL);
@@ -561,7 +694,7 @@ int main(int argc, char *argv[])
     {
         printf("UI-console: error starting Mupen64Plus core library.\n");
         DetachCoreLib();
-        return 3;
+        return M64ERR_SYSTEM_FAIL;
     }
 
     /* Open configuration sections */
@@ -570,7 +703,7 @@ int main(int argc, char *argv[])
     {
         (*CoreShutdown)();
         DetachCoreLib();
-        return 4;
+        return M64ERR_INPUT_INVALID;
     }
 
     /* parse command-line options */
@@ -579,7 +712,7 @@ int main(int argc, char *argv[])
     {
         (*CoreShutdown)();
         DetachCoreLib();
-        return 5;
+        return M64ERR_INPUT_INVALID;
     }
 
     /* Handle the core comparison feature */
@@ -587,7 +720,7 @@ int main(int argc, char *argv[])
     {
         printf("UI-console: can't use --core-compare feature with this Mupen64Plus core library.\n");
         DetachCoreLib();
-        return 6;
+        return M64ERR_INPUT_INVALID;
     }
     compare_core_init(l_CoreCompareMode);
 
@@ -595,108 +728,15 @@ int main(int argc, char *argv[])
     if (l_SaveOptions)
         SaveConfigurationOptions();
 
-    /* load ROM image */
-    FILE *fPtr = fopen(l_ROMFilepath, "rb");
-    if (fPtr == NULL)
-    {
-        fprintf(stderr, "Error: couldn't open ROM file '%s' for reading.\n", l_ROMFilepath);
-        (*CoreShutdown)();
-        DetachCoreLib();
-        return 7;
+    if (l_ROMFilepath == NULL) {
+        /* Enter the main loop */
+        GtkWidget* win = getMainWindow();
+        gtk_widget_show_all (win);
+        gtk_main ();
+    } else {
+        /* Play this rom one-off style */
+        rval = playRom(l_ROMFilepath);
     }
-
-    /* get the length of the ROM, allocate memory buffer, load it from disk */
-    long romlength = 0;
-    fseek(fPtr, 0L, SEEK_END);
-    romlength = ftell(fPtr);
-    fseek(fPtr, 0L, SEEK_SET);
-    unsigned char *ROM_buffer = (unsigned char *) malloc(romlength);
-    if (ROM_buffer == NULL)
-    {
-        fprintf(stderr, "Error: couldn't allocate %li-byte buffer for ROM image file '%s'.\n", romlength, l_ROMFilepath);
-        fclose(fPtr);
-        (*CoreShutdown)();
-        DetachCoreLib();
-        return 8;
-    }
-    else if (fread(ROM_buffer, 1, romlength, fPtr) != romlength)
-    {
-        fprintf(stderr, "Error: couldn't read %li bytes from ROM image file '%s'.\n", romlength, l_ROMFilepath);
-        free(ROM_buffer);
-        fclose(fPtr);
-        (*CoreShutdown)();
-        DetachCoreLib();
-        return 9;
-    }
-    fclose(fPtr);
-
-    /* Try to load the ROM image into the core */
-    if ((*CoreDoCommand)(M64CMD_ROM_OPEN, (int) romlength, ROM_buffer) != M64ERR_SUCCESS)
-    {
-        fprintf(stderr, "Error: core failed to open ROM image file '%s'.\n", l_ROMFilepath);
-        free(ROM_buffer);
-        (*CoreShutdown)();
-        DetachCoreLib();
-        return 10;
-    }
-    free(ROM_buffer); /* the core copies the ROM image, so we can release this buffer immediately */
-
-    /* handle the cheat codes */
-    CheatStart(l_CheatMode, l_CheatNumList);
-    if (l_CheatMode == CHEAT_SHOW_LIST)
-    {
-        (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
-        (*CoreShutdown)();
-        DetachCoreLib();
-        return 11;
-    }
-
-    /* search for and load plugins */
-    rval = PluginSearchLoad(l_ConfigUI);
-    if (rval != M64ERR_SUCCESS)
-    {
-        (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
-        (*CoreShutdown)();
-        DetachCoreLib();
-        return 12;
-    }
-
-    /* attach plugins to core */
-    for (i = 0; i < 4; i++)
-    {
-        if ((*CoreAttachPlugin)(g_PluginMap[i].type, g_PluginMap[i].handle) != M64ERR_SUCCESS)
-        {
-            fprintf(stderr, "UI-Console: error from core while attaching %s plugin.\n", g_PluginMap[i].name);
-            (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
-            (*CoreShutdown)();
-            DetachCoreLib();
-            return 13;
-        }
-    }
-
-    /* set up Frame Callback if --testshots is enabled */
-    if (l_TestShotList != NULL)
-    {
-        if ((*CoreDoCommand)(M64CMD_SET_FRAME_CALLBACK, 0, FrameCallback) != M64ERR_SUCCESS)
-        {
-            fprintf(stderr, "UI-Console: warning: couldn't set frame callback, so --testshots won't work.\n");
-        }
-    }
-
-    /* run the game */
-    (*CoreDoCommand)(M64CMD_EXECUTE, 0, NULL);
-
-    /* detach plugins from core and unload them */
-    for (i = 0; i < 4; i++)
-        (*CoreDetachPlugin)(g_PluginMap[i].type);
-    PluginUnload();
-
-    /* close the ROM image */
-    (*CoreDoCommand)(M64CMD_ROM_CLOSE, 0, NULL);
-
-    /* save the configuration file again if --saveoptions was specified, to keep any updated parameters from the core/plugins */
-    if (l_SaveOptions)
-        SaveConfigurationOptions();
 
     /* Shut down and release the Core library */
     (*CoreShutdown)();
@@ -705,11 +745,6 @@ int main(int argc, char *argv[])
     /* free allocated memory */
     if (l_TestShotList != NULL)
         free(l_TestShotList);
-
-    /* Enter the main loop */
-    GtkWidget* win = getMainWindow();
-    gtk_widget_show_all (win);
-    gtk_main ();
 
     return 0;
 }

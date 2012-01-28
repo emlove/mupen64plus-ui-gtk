@@ -30,6 +30,10 @@ static GtkWidget* createWindow()
     g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (infoButtonClick), (gpointer) win);
     gtk_box_pack_start (GTK_BOX (vbox), button, TRUE, TRUE, 0);
 
+    button = gtk_button_new_from_stock (GTK_STOCK_OPEN);
+    g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (openButtonClick), (gpointer) win);
+    gtk_box_pack_start (GTK_BOX (vbox), button, TRUE, TRUE, 0);
+
     button = gtk_button_new_from_stock (GTK_STOCK_CLOSE);
     g_signal_connect (button, "clicked", G_CALLBACK (closeButtonClick), NULL);
     gtk_box_pack_start (GTK_BOX (vbox), button, TRUE, TRUE, 0);

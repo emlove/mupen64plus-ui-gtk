@@ -205,6 +205,7 @@ SOURCE = \
 	$(SRCDIR)/cheat.c \
 	$(SRCDIR)/compare_core.c \
 	$(SRCDIR)/core_interface.c \
+	$(SRCDIR)/rom_events.c \
 	$(SRCDIR)/interface_alert.c \
 	$(SRCDIR)/interface_main_bindings.c \
 	$(SRCDIR)/interface_main.c \
