@@ -29,6 +29,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <gtk/gtk.h>
+
 // The mac version of SDL requires inclusion of SDL_main in the executable
 #ifdef __APPLE__
 #include <SDL/SDL_main.h>
@@ -41,6 +43,8 @@
 #include "core_interface.h"
 #include "compare_core.h"
 #include "osal_preproc.h"
+
+#include "interface_main.h"
 
 /** global variables **/
 int    g_Verbose = 0;
@@ -540,9 +544,21 @@ int main(int argc, char *argv[])
     printf("             |_|         http://code.google.com/p/mupen64plus/  \n");
     printf("%s Version %i.%i.%i\n\n", CONSOLE_UI_NAME, VERSION_PRINTF_SPLIT(CONSOLE_UI_VERSION));
 
+    /* Initialize GTK+ */
+    g_log_set_handler ("Gtk", G_LOG_LEVEL_WARNING, (GLogFunc) gtk_false, NULL);
+    gtk_init (&argc, &argv);
+    g_log_set_handler ("Gtk", G_LOG_LEVEL_WARNING, g_log_default_handler, NULL);
+
     /* bootstrap some special parameters from the command line */
     if (ParseCommandLineInitial(argc, (const char **) argv) != 0)
         return 1;
+
+    /* Enter the main loop */
+    GtkWidget* win = createWindow();
+    gtk_widget_show_all (win);
+    gtk_main ();
+
+    return 0;
 
     /* load the Mupen64Plus core library */
     if (AttachCoreLib(l_CoreLibPath) != M64ERR_SUCCESS)

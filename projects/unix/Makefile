@@ -86,6 +86,10 @@ OPTFLAGS ?= -O3
 CFLAGS += $(OPTFLAGS) -ffast-math -fno-strict-aliasing -pthread -I../../src
 LDLIBS += -pthread
 
+# Include gtk-3.0 dependencies
+CFLAGS += `pkg-config --cflags gtk+-3.0`
+LDLIBS += `pkg-config --libs gtk+-3.0`
+
 ifeq ($(PIE), 1)
   CFLAGS += -fPIE
   LDFLAGS += -fPIE -pie
@@ -201,6 +205,7 @@ SOURCE = \
 	$(SRCDIR)/cheat.c \
 	$(SRCDIR)/compare_core.c \
 	$(SRCDIR)/core_interface.c \
+	$(SRCDIR)/interface_main.c \
 	$(SRCDIR)/main.c \
 	$(SRCDIR)/plugin.c \
 	$(SRCDIR)/osal_dynamiclib_unix.c \
