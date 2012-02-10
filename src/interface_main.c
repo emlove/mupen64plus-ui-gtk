@@ -4,7 +4,7 @@ static GtkWidget* _mainWindow = NULL;
 static GtkWidget* playButton = NULL;
 static GtkWidget* stopButton = NULL;
 
-static int playButtonHandler;
+static int playButtonHandler = 0;
 
 GtkWidget* getMainWindow() {
     if (_mainWindow == NULL) {
@@ -15,16 +15,18 @@ GtkWidget* getMainWindow() {
 void interface_main_onRomOpenChange(bool romOpen) {
     gtk_widget_set_sensitive(playButton, romOpen);
     gtk_widget_set_sensitive(stopButton, romOpen);
+    interface_main_onRomPauseChange(!romOpen);
 }
 void interface_main_onRomPauseChange(bool romPaused) {
-    GtkWidget *win = getMainWindow();
-    g_signal_handler_disconnect (G_OBJECT (playButton), playButtonHandler);
+    if (playButtonHandler != 0) {
+        g_signal_handler_disconnect (G_OBJECT (playButton), playButtonHandler);
+    }
     if (romPaused) {
         gtk_tool_button_set_stock_id((GtkToolButton*)playButton, GTK_STOCK_MEDIA_PLAY);
-        playButtonHandler = g_signal_connect (G_OBJECT (playButton), "clicked", G_CALLBACK (playButtonClick), (gpointer) win);
+        playButtonHandler = g_signal_connect (G_OBJECT (playButton), "clicked", G_CALLBACK (playButtonClick), NULL);
     } else {
         gtk_tool_button_set_stock_id((GtkToolButton*)playButton, GTK_STOCK_MEDIA_PAUSE);
-        playButtonHandler = g_signal_connect (G_OBJECT (playButton), "clicked", G_CALLBACK (pauseButtonClick), (gpointer) win);
+        playButtonHandler = g_signal_connect (G_OBJECT (playButton), "clicked", G_CALLBACK (pauseButtonClick), NULL);
     }
 }
 
@@ -51,29 +53,28 @@ static GtkWidget* createWindow()
     gtk_container_add (GTK_CONTAINER (vbox), toolbar);
 
     button = gtk_tool_button_new_from_stock (GTK_STOCK_OPEN);
-    g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (openButtonClick), (gpointer) win);
+    g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (openButtonClick), NULL);
     gtk_toolbar_insert (GTK_TOOLBAR(toolbar), button, -1);
 
     button = gtk_tool_button_new_from_stock (GTK_STOCK_MEDIA_PLAY);
-    playButtonHandler = g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (playButtonClick), (gpointer) win);
     gtk_toolbar_insert (GTK_TOOLBAR(toolbar), button, -1);
     playButton = (GtkWidget *)button;
-    gtk_widget_set_sensitive(playButton, FALSE);
 
     button = gtk_tool_button_new_from_stock (GTK_STOCK_MEDIA_STOP);
-    g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (stopButtonClick), (gpointer) win);
+    g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (stopButtonClick), NULL);
     gtk_widget_set_sensitive((GtkWidget *)button, FALSE);
     gtk_toolbar_insert (GTK_TOOLBAR(toolbar), button, -1);
     stopButton = (GtkWidget *)button;
-    gtk_widget_set_sensitive(stopButton, FALSE);
 
     button = gtk_tool_button_new_from_stock (GTK_STOCK_DIALOG_INFO);
-    g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (infoButtonClick), (gpointer) win);
+    g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (infoButtonClick), NULL);
     gtk_toolbar_insert (GTK_TOOLBAR(toolbar), button, -1);
 
     button = gtk_tool_button_new_from_stock (GTK_STOCK_CLOSE);
     g_signal_connect (button, "clicked", G_CALLBACK (closeButtonClick), NULL);
     gtk_toolbar_insert (GTK_TOOLBAR(toolbar), button, -1);
+    
+    interface_main_onRomOpenChange(FALSE);
 
     return win;
 }
