@@ -3,10 +3,10 @@
 
 void romOpen ()
 {
-    interface_main_onRomOpen();
+    interface_main_onRomOpenChange(TRUE);
 }
 
 void romClose()
 {
-    interface_main_onRomClose();
+    interface_main_onRomOpenChange(FALSE);
 }

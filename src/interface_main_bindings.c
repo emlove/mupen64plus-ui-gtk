@@ -38,16 +38,19 @@ void openButtonClick (GtkWidget *wid, GtkWidget *win)
         startRomThread(filename);
     }
     gtk_widget_destroy (dialog);
+    interface_main_onRomPauseChange(FALSE);
 }
 
 void playButtonClick (GtkWidget *wid, GtkWidget *win)
 {
-    
+    (*CoreDoCommand)(M64CMD_RESUME, 0, NULL);
+    interface_main_onRomPauseChange(FALSE);
 }
 
 void pauseButtonClick (GtkWidget *wid, GtkWidget *win)
 {
-    
+    (*CoreDoCommand)(M64CMD_PAUSE, 0, NULL);
+    interface_main_onRomPauseChange(TRUE);
 }
 
 void stopButtonClick (GtkWidget *wid, GtkWidget *win)
