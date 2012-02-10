@@ -5,7 +5,7 @@
 #include "interface_alert.h"
 #include "core_interface.h"
 #include "version.h"
-#include "main.h"
+#include "rom_thread.h"
 
 void infoButtonClick (GtkWidget *wid, GtkWidget *win)
 {
@@ -19,6 +19,9 @@ void infoButtonClick (GtkWidget *wid, GtkWidget *win)
 
 void openButtonClick (GtkWidget *wid, GtkWidget *win)
 {
+    if (isRomThreadRunning()) {
+        return;
+    }
     GtkWidget *dialog;
 
     dialog = gtk_file_chooser_dialog_new ("Open ROM",
@@ -32,12 +35,38 @@ void openButtonClick (GtkWidget *wid, GtkWidget *win)
     if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
         filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-        g_thread_create( (GThreadFunc)playRomThread, filename, FALSE, NULL );
+        startRomThread(filename);
     }
     gtk_widget_destroy (dialog);
 }
 
+void playButtonClick (GtkWidget *wid, GtkWidget *win)
+{
+    
+}
+
+void pauseButtonClick (GtkWidget *wid, GtkWidget *win)
+{
+    
+}
+
+void stopButtonClick (GtkWidget *wid, GtkWidget *win)
+{
+    (*CoreDoCommand)(M64CMD_STOP, 0, NULL);
+}
+
+void closeGUI() {
+    (*CoreDoCommand)(M64CMD_STOP, 0, NULL);
+    finishRomThread();
+    gtk_main_quit();
+}
+
+void mainWindowClose ()
+{
+    closeGUI();
+}
+
 void closeButtonClick (GtkWidget *wid, GtkWidget *win)
 {
-    gtk_main_quit();
+    closeGUI();
 }

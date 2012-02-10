@@ -657,11 +657,6 @@ m64p_error playRom(const char *ROMFilepath)
     return M64ERR_SUCCESS;
 }
 
-gpointer playRomThread(const char *ROMFilepath)
-{
-    playRom(ROMFilepath);
-}
-
 /*********************************************************************************************************
 * main function
 */

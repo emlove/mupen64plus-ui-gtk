@@ -9,4 +9,7 @@
 GtkWidget* getMainWindow();
 static GtkWidget* createWindow();
 
+void interface_main_onRomOpen();
+void interface_main_onRomClose();
+
 #endif /* __INTERFACE_MAIN_H__ */

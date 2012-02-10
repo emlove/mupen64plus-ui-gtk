@@ -24,11 +24,11 @@
 
 #include <gtk/gtk.h>
 #include <stdbool.h>
+#include "m64p_types.h"
 
 extern void DebugCallback(void *Context, int level, const char *message);
 
-gpointer playRomThread(const char *ROMFilepath);
-bool getRomOpen();
+m64p_error playRom(const char *ROMFilepath);
 
 extern int  g_Verbose;
 
