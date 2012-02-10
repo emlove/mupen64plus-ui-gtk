@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus - main.h                                                  *
+ *   Mupen64plus-ui-gtk - main.h                                           *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2012 Adam Mills                                         *
  *   Copyright (C) 2009 Richard42                                          *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *

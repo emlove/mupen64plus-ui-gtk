@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - compare_core.h                                          *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2012 Adam Mills                                         *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *   Copyright (C) 2002 Hacktarux                                          *
  *                                                                         *

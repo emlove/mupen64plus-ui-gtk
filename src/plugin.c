@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-ui-console - plugin.c                                     *
+ *   Mupen64plus-ui-gtk - plugin.c                                         *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2009 Richard42                                          *
  *                                                                         *

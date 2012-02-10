@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-ui-console - main.c                                       *
+ *   Mupen64plus-ui-gtk - main.c                                           *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2012 Adam Mills                                         *
  *   Copyright (C) 2007-2010 Richard42                                     *
  *   Copyright (C) 2008 Ebenblues Nmn Okaygo Tillin9                       *
  *   Copyright (C) 2002 Hacktarux                                          *

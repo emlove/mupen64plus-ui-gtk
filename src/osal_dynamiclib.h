@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-ui-console - osal_dynamiclib.h                            *
+ *   Mupen64plus-ui-gtk - osal_dynamiclib.h                                *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *

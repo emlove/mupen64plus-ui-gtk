@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-ui-console - core_interface.h                             *
+ *   Mupen64plus-ui-gtk - core_interface.h                                 *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2012 Adam Mills                                         *
  *   Copyright (C) 2009 Richard Goedeken                                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *

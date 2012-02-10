@@ -1,6 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *   Mupen64plus - cheat.c                                                 *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+ *   Copyright (C) 2012 Adam Mills                                         *
  *   Copyright (C) 2009-2010 Richard Goedeken                              *
  *   Copyright (C) 2010 Rhett Osborne (spinout)                            *
  *                                                                         *
