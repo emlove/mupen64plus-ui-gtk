@@ -89,8 +89,3 @@ void mainWindowClose ()
 {
     closeGUI();
 }
-
-void closeButtonClick (GtkWidget *wid, GtkWidget *win)
-{
-    closeGUI();
-}

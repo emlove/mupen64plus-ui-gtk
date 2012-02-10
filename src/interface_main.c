@@ -90,10 +90,6 @@ static GtkWidget* createWindow()
     button = gtk_tool_button_new_from_stock (GTK_STOCK_DIALOG_INFO);
     g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (infoButtonClick), NULL);
     gtk_toolbar_insert (GTK_TOOLBAR(toolbar), button, -1);
-
-    button = gtk_tool_button_new_from_stock (GTK_STOCK_CLOSE);
-    g_signal_connect (button, "clicked", G_CALLBACK (closeButtonClick), NULL);
-    gtk_toolbar_insert (GTK_TOOLBAR(toolbar), button, -1);
     
     interface_main_onRomOpenChange(FALSE);
 
