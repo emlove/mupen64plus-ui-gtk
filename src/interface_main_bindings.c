@@ -28,16 +28,6 @@
 #include "version.h"
 #include "rom_thread.h"
 
-void infoButtonClick (GtkWidget *wid, GtkWidget *win)
-{
-    int CoreVersion;
-    const char *CoreName;
-    getCoreVersion(NULL, &CoreVersion, NULL, &CoreName, NULL);
-    const char *message;
-    asprintf(&message, MESSAGES_INFO, CoreName, VERSION_PRINTF_SPLIT(CoreVersion));
-    alert(message);
-}
-
 void openButtonClick (GtkWidget *wid, GtkWidget *win)
 {
     if (isRomThreadRunning()) {
@@ -77,6 +67,21 @@ void pauseButtonClick (GtkWidget *wid, GtkWidget *win)
 void stopButtonClick (GtkWidget *wid, GtkWidget *win)
 {
     (*CoreDoCommand)(M64CMD_STOP, 0, NULL);
+}
+
+void settingsButtonClick (GtkWidget *wid, GtkWidget *win)
+{
+
+}
+
+void infoButtonClick (GtkWidget *wid, GtkWidget *win)
+{
+    int CoreVersion;
+    const char *CoreName;
+    getCoreVersion(NULL, &CoreVersion, NULL, &CoreName, NULL);
+    const char *message;
+    asprintf(&message, MESSAGES_INFO, CoreName, VERSION_PRINTF_SPLIT(CoreVersion));
+    alert(message);
 }
 
 void closeGUI() {

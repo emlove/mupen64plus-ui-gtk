@@ -87,6 +87,10 @@ static GtkWidget* createWindow()
     gtk_toolbar_insert (GTK_TOOLBAR(toolbar), button, -1);
     stopButton = (GtkWidget *)button;
 
+    button = gtk_tool_button_new_from_stock (GTK_STOCK_PREFERENCES);
+    g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (settingsButtonClick), NULL);
+    gtk_toolbar_insert (GTK_TOOLBAR(toolbar), button, -1);
+
     button = gtk_tool_button_new_from_stock (GTK_STOCK_DIALOG_INFO);
     g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (infoButtonClick), NULL);
     gtk_toolbar_insert (GTK_TOOLBAR(toolbar), button, -1);
