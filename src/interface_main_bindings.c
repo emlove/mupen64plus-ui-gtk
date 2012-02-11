@@ -23,6 +23,7 @@
 
 #include "strings.h"
 #include "interface_main.h"
+#include "interface_settings.h"
 #include "interface_alert.h"
 #include "core_interface.h"
 #include "version.h"
@@ -71,7 +72,7 @@ void stopButtonClick (GtkWidget *wid, GtkWidget *win)
 
 void settingsButtonClick (GtkWidget *wid, GtkWidget *win)
 {
-
+    gtk_widget_show_all (getSettingsWindow());
 }
 
 void infoButtonClick (GtkWidget *wid, GtkWidget *win)

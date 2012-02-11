@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-ui-gtk - interface_main.h                                 *
+ *   Mupen64plus-ui-gtk - interface_settings.c                             *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2012 Adam Mills                                         *
  *                                                                         *
@@ -19,18 +19,29 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef __INTERFACE_MAIN_H__
-#define __INTERFACE_MAIN_H__
+#include "interface_settings.h"
 
-#include <gtk/gtk.h>
-#include <stdbool.h>
+static GtkWidget* _settingsWindow = NULL;
 
-#include "strings.h"
-#include "interface_main_bindings.h"
+static GtkWidget* createWindow();
 
-GtkWidget* getMainWindow();
+GtkWidget* getSettingsWindow() {
+    if (_settingsWindow == NULL) {
+        _settingsWindow = createWindow();
+    }
+    return _settingsWindow;
+}
 
-void interface_main_onRomOpenChange(bool romOpen);
-void interface_main_onRomPauseChange(bool romPaused);
+static GtkWidget* createWindow()
+{
+    GtkWidget *win = NULL;
 
-#endif /* __INTERFACE_MAIN_H__ */
+    /* Create the main window */
+    win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title (GTK_WINDOW (win), GTK_SETTINGS_TITLE);
+    gtk_window_resize (GTK_WINDOW (win), 300, 100);
+    gtk_widget_realize (win);
+    g_signal_connect (win, "delete_event", (GCallback)gtk_widget_hide_on_delete, NULL);
+
+    return win;
+}

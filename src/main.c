@@ -726,8 +726,7 @@ int main(int argc, char *argv[])
 
     if (l_ROMFilepath == NULL) {
         /* Enter the main loop */
-        GtkWidget* win = getMainWindow();
-        gtk_widget_show_all (win);
+        gtk_widget_show_all (getMainWindow());
         gtk_main ();
     } else {
         /* Play this rom one-off style */

@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-ui-gtk - interface_main.h                                 *
+ *   Mupen64plus-ui-gtk - interface_settings_bindings.c                    *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
  *   Copyright (C) 2012 Adam Mills                                         *
  *                                                                         *
@@ -19,18 +19,4 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#ifndef __INTERFACE_MAIN_H__
-#define __INTERFACE_MAIN_H__
-
-#include <gtk/gtk.h>
-#include <stdbool.h>
-
-#include "strings.h"
-#include "interface_main_bindings.h"
-
-GtkWidget* getMainWindow();
-
-void interface_main_onRomOpenChange(bool romOpen);
-void interface_main_onRomPauseChange(bool romPaused);
-
-#endif /* __INTERFACE_MAIN_H__ */
+#include "interface_settings_bindings.h"

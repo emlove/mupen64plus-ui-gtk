@@ -1,6 +1,7 @@
 #/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 # *   Mupen64plus - Makefile                                                *
 # *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
+# *   Copyright (C) 2012 Adam Mills                                         *
 # *   Copyright (C) 2009 Richard42                                          *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
@@ -18,7 +19,7 @@
 # *   Free Software Foundation, Inc.,                                       *
 # *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
 # * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-# Makefile for Mupen64plus-ui-console
+# Makefile for Mupen64plus-ui-gtk
 
 # detect operation system
 UNAME = $(shell uname -s)
@@ -208,6 +209,8 @@ SOURCE = \
 	$(SRCDIR)/rom_events.c \
 	$(SRCDIR)/rom_thread.c \
 	$(SRCDIR)/interface_alert.c \
+	$(SRCDIR)/interface_settings_bindings.c \
+	$(SRCDIR)/interface_settings.c \
 	$(SRCDIR)/interface_main_bindings.c \
 	$(SRCDIR)/interface_main.c \
 	$(SRCDIR)/main.c \

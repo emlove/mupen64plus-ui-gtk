@@ -25,6 +25,8 @@ static GtkWidget* _mainWindow = NULL;
 static GtkWidget* playButton = NULL;
 static GtkWidget* stopButton = NULL;
 
+static GtkWidget* createWindow();
+
 static int playButtonHandler = 0;
 
 GtkWidget* getMainWindow() {
@@ -60,14 +62,11 @@ static GtkWidget* createWindow()
 
     /* Create the main window */
     win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    gtk_container_set_border_width (GTK_CONTAINER (win), 8);
     gtk_window_set_title (GTK_WINDOW (win), GTK_UI_TITLE);
-    gtk_window_set_position (GTK_WINDOW (win), GTK_WIN_POS_CENTER);
     gtk_window_resize (GTK_WINDOW (win), 300, 100);
-    gtk_widget_realize (win);
     g_signal_connect (win, "destroy", mainWindowClose, NULL);
 
-    /* Create a vertical box with buttons */
+    /* Create the toolbar */
     toolbar = gtk_toolbar_new ();
     vbox = gtk_vbox_new (FALSE, 6);
     gtk_container_add (GTK_CONTAINER (win), vbox);
