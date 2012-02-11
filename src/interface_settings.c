@@ -35,13 +35,30 @@ GtkWidget* getSettingsWindow() {
 static GtkWidget* createWindow()
 {
     GtkWidget *win = NULL;
+    GtkWidget *notebook = NULL;
+    GtkWidget *vbox = NULL;
+    GtkWidget *checkbutton = NULL;
 
     /* Create the main window */
     win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title (GTK_WINDOW (win), GTK_SETTINGS_TITLE);
-    gtk_window_resize (GTK_WINDOW (win), 300, 100);
+    gtk_window_set_title (GTK_WINDOW (win), TITLE_WINDOW_SETTINGS);
+    gtk_window_set_default_size (GTK_WINDOW (win), 300, 100);
     gtk_widget_realize (win);
     g_signal_connect (win, "delete_event", (GCallback)gtk_widget_hide_on_delete, NULL);
+    
+    notebook = gtk_notebook_new ();
+    gtk_container_add (GTK_CONTAINER (win), notebook);
+    
+    vbox = gtk_vbox_new (FALSE, 6);
+    gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, 
+                gtk_label_new(TITLE_TAB_SETTINGS_GENERAL));
+                
+    /* BEGIN GENERAL TAB */
+    checkbutton = gtk_check_button_new_with_label (LABEL_SETTINGS_OnScreenDisplay);
+    gtk_widget_set_tooltip_text (checkbutton, TOOLTIP_SETTINGS_OnScreenDisplay);
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbutton), TRUE);
+    gtk_container_add (GTK_CONTAINER (vbox), checkbutton);
+    /* END GENERAL TAB */
 
     return win;
 }

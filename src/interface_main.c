@@ -59,11 +59,12 @@ static GtkWidget* createWindow()
     GtkWidget *win = NULL;
     GtkWidget *toolbar = NULL;
     GtkWidget *vbox = NULL;
+    GtkRequisition default_size;
 
     /* Create the main window */
     win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title (GTK_WINDOW (win), GTK_UI_TITLE);
-    gtk_window_resize (GTK_WINDOW (win), 300, 100);
+    gtk_window_set_title (GTK_WINDOW (win), TITLE_WINDOW_MAIN);
+    gtk_window_set_default_size (GTK_WINDOW (win), 300, 100);
     g_signal_connect (win, "destroy", mainWindowClose, NULL);
 
     /* Create the toolbar */

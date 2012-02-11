@@ -22,8 +22,14 @@
 #ifndef __STRINGS_H__
 #define __STRINGS_H__
 
-#define GTK_UI_TITLE        "Mupen64Plus GTK"
-#define GTK_SETTINGS_TITLE  "Settings"
-#define MESSAGES_INFO       "Attached to core library '%s' version %i.%i.%i"
+#define TITLE_WINDOW_MAIN               "Mupen64Plus GTK"
+#define TITLE_WINDOW_SETTINGS           "Settings"
+#define TITLE_TAB_SETTINGS_GENERAL      "General"
+
+#define MESSAGES_INFO                   "Attached to core library '%s' version %i.%i.%i"
+
+#define LABEL_SETTINGS_OnScreenDisplay  "On Screen Display"
+
+#define TOOLTIP_SETTINGS_OnScreenDisplay "Draw on-screen display if Checked, otherwise don't draw OSD"
 
 #endif /* __STRINGS__ */
