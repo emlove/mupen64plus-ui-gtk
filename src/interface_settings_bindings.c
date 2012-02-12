@@ -20,3 +20,13 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "interface_settings_bindings.h"
+
+#include "m64p_types.h"
+#include <stdio.h>
+#include "config_interface.h"
+
+void toggle_OnScreenDisplay (GtkToggleButton *togglebutton, gpointer user_data)
+{
+    int checked = gtk_toggle_button_get_active(togglebutton);
+    ConfigSet(CONFIG_SECTION_CORE, "OnScreenDisplay", M64TYPE_BOOL, &checked);
+}

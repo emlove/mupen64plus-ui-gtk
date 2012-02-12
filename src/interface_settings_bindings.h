@@ -24,5 +24,7 @@
 
 #include <gtk/gtk.h>
 
+void toggle_OnScreenDisplay (GtkToggleButton *togglebutton, gpointer user_data);
+
 
 #endif /* __INTERFACE_SETTINGS_BINDINGS_H__ */

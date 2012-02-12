@@ -21,6 +21,9 @@
 
 #include "interface_settings.h"
 
+#include "interface_settings_bindings.h"
+#include "config_interface.h"
+
 static GtkWidget* _settingsWindow = NULL;
 
 static GtkWidget* createWindow();
@@ -38,13 +41,14 @@ static GtkWidget* createWindow()
     GtkWidget *notebook = NULL;
     GtkWidget *vbox = NULL;
     GtkWidget *checkbutton = NULL;
+    int checkValue;
 
     /* Create the main window */
     win = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title (GTK_WINDOW (win), TITLE_WINDOW_SETTINGS);
     gtk_window_set_default_size (GTK_WINDOW (win), 300, 100);
     gtk_widget_realize (win);
-    g_signal_connect (win, "delete_event", (GCallback)gtk_widget_hide_on_delete, NULL);
+    g_signal_connect (win, "delete_event", G_CALLBACK (gtk_widget_hide_on_delete), NULL);
     
     notebook = gtk_notebook_new ();
     gtk_container_add (GTK_CONTAINER (win), notebook);
@@ -56,8 +60,10 @@ static GtkWidget* createWindow()
     /* BEGIN GENERAL TAB */
     checkbutton = gtk_check_button_new_with_label (LABEL_SETTINGS_OnScreenDisplay);
     gtk_widget_set_tooltip_text (checkbutton, TOOLTIP_SETTINGS_OnScreenDisplay);
-    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbutton), TRUE);
+    ConfigGet(CONFIG_SECTION_CORE, "OnScreenDisplay", M64TYPE_BOOL, &checkValue, sizeof(checkValue));
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(checkbutton), checkValue);
     gtk_container_add (GTK_CONTAINER (vbox), checkbutton);
+    g_signal_connect (checkbutton, "toggled", G_CALLBACK (toggle_OnScreenDisplay), NULL);
     /* END GENERAL TAB */
 
     return win;

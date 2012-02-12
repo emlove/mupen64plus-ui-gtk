@@ -1,7 +1,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *   Mupen64plus-ui-gtk - plugin.h                                         *
+ *   Mupen64plus-ui-gtk - config_interface.h                               *
  *   Mupen64Plus homepage: http://code.google.com/p/mupen64plus/           *
- *   Copyright (C) 2009 Richard42                                          *
+ *   Copyright (C) 2012 Adam Mills                                         *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,32 +19,28 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.          *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#if !defined(PLUGIN_H)
-#define PLUGIN_H
+#ifndef __CONFIG_INTERFACE_H__
+#define __CONFIG_INTERFACE_H__
 
 #include "m64p_types.h"
-#include "osal_preproc.h"
 
-extern m64p_error PluginSearchLoad();
-extern m64p_error PluginUnload(void);
+typedef enum {
+  CONFIG_SECTION_CORE = 1,
+  CONFIG_SECTION_VIDEO,
+  CONFIG_SECTION_UI
+} config_section;
 
-extern const char *g_PluginDir;        // directory to search for plugins
-extern const char *g_GfxPlugin;        // graphics plugin specified at commandline (if any)
-extern const char *g_AudioPlugin;      // audio plugin specified at commandline (if any)
-extern const char *g_InputPlugin;      // input plugin specified at commandline (if any)
-extern const char *g_RspPlugin;        // rsp plugin specified at commandline (if any)
+m64p_error ConfigGetSectionHandle(config_section ConfigSection, m64p_handle *ConfigSectionHandle);
 
-typedef struct {
-  m64p_plugin_type    type;
-  char                name[8];
-  m64p_dynlib_handle  handle;
-  char                filename[PATH_MAX];
-  const char         *libname;
-  int                 libversion;
-  } plugin_map_node;
+m64p_error ConfigGet(config_section ConfigSection, 
+                        const char *ParamName, 
+                        m64p_type ParamType, 
+                        void *ParamValue, 
+                        int MaxSize);
+m64p_error ConfigSet(config_section ConfigSection, 
+                        const char *ParamName, 
+                        m64p_type ParamType, 
+                        const void *ParamValue);
 
-extern plugin_map_node g_PluginMap[4];
-
-#endif /* #define PLUGIN_H */
-
+#endif /* __CONFIG_INTERFACE_H__ */
 

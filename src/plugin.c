@@ -26,6 +26,7 @@
 #include "m64p_types.h"
 #include "m64p_common.h"
 #include "core_interface.h"
+#include "config_interface.h"
 #include "osal_dynamiclib.h"
 #include "osal_files.h"
 #include "plugin.h"
@@ -100,8 +101,14 @@ static m64p_error PluginLoadTry(const char *filepath, int MapIndex)
 }
 
 /* global functions */
-m64p_error PluginSearchLoad(m64p_handle ConfigUI)
+m64p_error PluginSearchLoad()
 {
+    m64p_handle ConfigUI;
+    
+    if (ConfigGetSectionHandle(CONFIG_SECTION_UI, &ConfigUI) != M64ERR_SUCCESS) {
+        return M64ERR_PLUGIN_FAIL;
+    }
+    
     osal_lib_search *lib_filelist = NULL;
     int i;
 
