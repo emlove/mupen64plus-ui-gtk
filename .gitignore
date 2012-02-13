@@ -1,5 +1,6 @@
 projects/unix/_obj/
 projects/unix/mupen64plus
+projects/msvc8/*
+!projects/msvc8/mupen64plus-ui-gtk.sln
+!projects/msvc8/mupen64plus-ui-gtk.vcproj
 libmupen64plus.so.2*
-
-.hg*

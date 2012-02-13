@@ -620,8 +620,6 @@ m64p_error playRom(const char *ROMFilepath)
 */
 int main(int argc, char *argv[])
 {
-    int i;
-
     printf(" __  __                         __   _  _   ____  _             \n");  
     printf("|  \\/  |_   _ _ __   ___ _ __  / /_ | || | |  _ \\| |_   _ ___ \n");
     printf("| |\\/| | | | | '_ \\ / _ \\ '_ \\| '_ \\| || |_| |_) | | | | / __|  \n");

@@ -33,16 +33,13 @@ int isRomThreadRunning() {
 gpointer playRomThread(const char *ROMFilepath)
 {
     playRom(ROMFilepath);
-    G_LOCK (romThread);
     romThread = NULL;
-    G_UNLOCK (romThread);
+	return NULL;
 }
 
 void startRomThread(char *ROMFilepath)
 {
-    G_LOCK (romThread);
-    romThread = g_thread_create( (GThreadFunc)playRomThread, ROMFilepath, TRUE, NULL );
-    G_UNLOCK (romThread);
+    romThread = g_thread_create( (GThreadFunc)playRomThread, ROMFilepath, FALSE, NULL );
 }
 
 void finishRomThread() {
