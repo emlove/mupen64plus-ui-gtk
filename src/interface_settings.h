@@ -23,7 +23,6 @@
 #define __INTERFACE_SETTINGS_H__
 
 #include <gtk/gtk.h>
-#include <stdbool.h>
 
 #include "strings.h"
 #include "interface_main_bindings.h"

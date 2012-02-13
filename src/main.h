@@ -24,7 +24,6 @@
 #define __MAIN_H__
 
 #include <gtk/gtk.h>
-#include <stdbool.h>
 #include "m64p_types.h"
 
 extern void DebugCallback(void *Context, int level, const char *message);

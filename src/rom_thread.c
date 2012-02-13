@@ -26,7 +26,7 @@
 G_LOCK_DEFINE (romThread);
 static GThread* romThread = NULL;
 
-bool isRomThreadRunning() {
+int isRomThreadRunning() {
     return romThread != NULL;
 }
 

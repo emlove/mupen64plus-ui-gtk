@@ -35,12 +35,12 @@ GtkWidget* getMainWindow() {
     }
     return _mainWindow;
 }
-void interface_main_onRomOpenChange(bool romOpen) {
+void interface_main_onRomOpenChange(gboolean romOpen) {
     gtk_widget_set_sensitive(playButton, romOpen);
     gtk_widget_set_sensitive(stopButton, romOpen);
     interface_main_onRomPauseChange(!romOpen);
 }
-void interface_main_onRomPauseChange(bool romPaused) {
+void interface_main_onRomPauseChange(gboolean romPaused) {
     if (playButtonHandler != 0) {
         g_signal_handler_disconnect (G_OBJECT (playButton), playButtonHandler);
     }
